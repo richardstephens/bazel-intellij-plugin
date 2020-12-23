@@ -491,6 +491,7 @@ final class SyncPhaseCoordinator {
       }
     } catch (Throwable e) {
       logSyncError(context, e);
+      syncResult = SyncResult.FAILURE;
     } finally {
       SyncProjectState projectState = updateTask.projectState();
       finishSync(
@@ -701,10 +702,12 @@ final class SyncPhaseCoordinator {
       BlazeContext context,
       ProjectViewSet projectViewSet,
       ImmutableSet<Integer> buildIds,
-      BlazeProjectData blazeProjectData,
+      @Nullable BlazeProjectData blazeProjectData,
       BlazeSyncParams syncParams,
       SyncResult syncResult) {
-    validate(project, context, blazeProjectData);
+    if (blazeProjectData != null) {
+      validate(project, context, blazeProjectData);
+    }
     final SyncListener[] syncListeners = SyncListener.EP_NAME.getExtensions();
     for (SyncListener syncListener : syncListeners) {
       syncListener.onSyncComplete(
@@ -720,7 +723,7 @@ final class SyncPhaseCoordinator {
   }
 
   private static void validate(
-      Project project, BlazeContext context, BlazeProjectData blazeProjectData) {
+      Project project, BlazeContext context, @Nullable BlazeProjectData blazeProjectData) {
     for (BlazeSyncPlugin syncPlugin : BlazeSyncPlugin.EP_NAME.getExtensions()) {
       syncPlugin.validate(project, context, blazeProjectData);
     }
