@@ -6,6 +6,6 @@ jobs:
       - image: l.gcr.io/google/bazel:3.4.1
     steps:
       - checkout
-      - run: bazel build //ijwb:ijwb_bazel_zip --define=ij_product=intellij-latest
+      - run: bazel build //ijwb:ijwb_bazel_zip --define=ij_product=intellij-beta
       - store_artifacts:
           path: bazel-bin/ijwb/ijwb_bazel.zip
